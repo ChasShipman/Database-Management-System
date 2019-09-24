@@ -1,0 +1,15 @@
+h2 {
+	margin-right: 0px;
+}
+
+a {
+	color: #616161;
+}
+
+a:hover {
+	color: #1976D2;
+}
+
+button:hover {
+	background: #1976D2;
+}

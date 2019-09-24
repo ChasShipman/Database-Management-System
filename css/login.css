@@ -1,0 +1,80 @@
+*:focus {
+	outline: none;
+}
+
+h1 {
+	margin-top: 0px;
+	margin-bottom: 10px;
+}
+
+h2 {
+	margin-right: 25px;
+}
+
+.input-wrapper {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	flex-direction: row;
+	margin: 0px;
+}
+
+.button-wrapper {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: row;
+	margin: 0px;
+}
+
+input {
+	width: 300px;
+	height: 40px;
+	background: #E0E0E0;
+	border: none;
+	border-radius: 50px;
+
+	font-family: 'Roboto', sans-serif;
+	font-size: 18px;
+	text-align: center;
+	text-decoration: none;
+}
+
+button {
+	width: 120px;
+	height: 40px;
+
+	margin: 5px;
+	background: #616161;
+	border: none;
+	border-radius: 50px;
+
+	font-family: 'Roboto', sans-serif;
+	color: white;
+	font-size: 18px;
+	text-align: center;
+	line-height: 40px;
+
+	cursor: pointer;
+}
+
+button#login:hover {
+	background: #388E3C;
+	color: white;
+	font-weight: 700;
+}
+
+button#register:hover {
+	background: #1976D2;
+	color: white;
+	font-weight: 700;
+}
+
+button#back {
+	background: none;
+	color: #616161;
+}
+
+button#back:hover {
+	font-weight: 700;
+}

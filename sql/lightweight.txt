@@ -1,0 +1,512 @@
+BEGIN TRANSACTION;
+CREATE TABLE IF NOT EXISTS `Theatre` (
+	`TheatreID`	INTEGER NOT NULL UNIQUE,
+	`Name`	VARCHAR ( 50 ) NOT NULL,
+	`State`	VARCHAR ( 2 ) NOT NULL,
+	`City`	VARCHAR ( 50 ) NOT NULL,
+	`Street`	VARCHAR ( 50 ) NOT NULL UNIQUE,
+	`ZIP`	INTEGER NOT NULL CHECK(10000 <= ZIP <= 99999),
+	PRIMARY KEY(`TheatreID`)
+);
+INSERT INTO `Theatre` (TheatreID,Name,State,City,Street,ZIP) VALUES (1111,'UA Movie Theatre','AL','Tuscaloosa','115 University Blvd.',35401),
+ (2222,'Roll Tide Theatre','AL','Tuscaloosa','5566 Hargrove',35401),
+ (3333,'Bama Thetare','AL','Tuscaloosa','1445 McFarland',35401),
+ (4444,'Go Bama Go theatre','AL','Northport','32 12th',35401),
+ (5555,'This Theatre is Tua Good','AL','Tuscaloosa','852 University',35401),
+ (6666,'Big Al Theatre','AL','Tuscaloosa','745 15th',35401);
+CREATE TABLE IF NOT EXISTS `SystemInfo` (
+	`CancellationFee`	INTEGER NOT NULL,
+	`ManagerPassword`	INTEGER NOT NULL,
+	`SeniorDiscount`	FLOAT NOT NULL,
+	`ChildDiscount`	FLOAT NOT NULL,
+	`TicketCost`	FLOAT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS `Review` (
+	`ReviewID`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	`Title`	VARCHAR ( 30 ) NOT NULL,
+	`Comments`	VARCHAR ( 500 ) NOT NULL,
+	`Rating`	FLOAT NOT NULL CHECK(0 <= Rating <= 5),
+	`Username`	VARCHAR ( 15 ) NOT NULL,
+	`MovieTitle`	VARCHAR ( 50 ) NOT NULL,
+	FOREIGN KEY(`Username`) REFERENCES `Customer`(`Username`),
+	FOREIGN KEY(`MovieTitle`) REFERENCES `Movie`(`Title`)
+);
+INSERT INTO `Review` (ReviewID,Title,Comments,Rating,Username,MovieTitle) VALUES (1,'Wow','It was pretty amazing.',5.0,'henry','Bohemian Rhapsody'),
+ (2,'Meh','Nothing Specail.',3.0,'minrui','At Eternitys Gate'),
+ (3,'Touching','I have never felt so sad',4.0,'henry','Widows'),
+ (4,'Alright','It was alright',3.0,'chas','The World Before Your Feet'),
+ (5,'Trash','Do not see this',1.0,'henry','Ralph Breaks the Internet'),
+ (6,'Pretty Good','I liked it',4.0,'chas','At Eternitys Gate'),
+ (7,'Well Then','Not a complete waste',2.0,'mike','The World Before Your Feet'),
+ (8,'Nice','I had a great time',4.0,'jesse','Mid90s'),
+ (9,'Pretty Funny','I laughed alot',4.0,'mike','Instant Family'),
+ (10,'AMAZING!!!!','Best thriller of the year!',5.0,'mike','Halloween'),
+ (11,'Another Remake','Not as good as disneys movie.',3.0,'chas','Robin Hood'),
+ (12,'Another good movie','Has its faults but its alright',4.0,'jesse','Fantastic Beasts: The Crimes of Grindelwald'),
+ (13,'Creeds back','A great sequel, expands on the previous movie!',5.0,'mike','Creed II'),
+ (14,'Tribute','A great tribute to Freddy.',4.0,'mike','Bohemian Rhapsody'),
+ (15,'Meh','I did not find it that funny',2.0,'mike','Mid90s'),
+ (16,'Alright','I had fun watching it.',3.0,'mike','Robin Hood'),
+ (17,'Very Nice','Now THIS is comedy',5.0,'mike','Instant Family'),
+ (18,'Garbage','Who even asked for this movie! SAD!',1.0,'chas','The Nutcracker and the Four Realms'),
+ (19,'Americana Revived','I am not crying! It is just the exhaust fumes ^_^',5.0,'mike','The Last Race'),
+ (20,'Not enough NOS','Good movie, but would have been more exciting with tuners and NOS',4.0,'jesse','The Last Race'),
+ (21,'Insulting','2/5 stars. Tchaikovky is rolling in his grave. UGH!',2.0,'minrui','The Nutcracker and the Four Realms'),
+ (22,'MEH','MeEHHHHH',4.0,'henry','Widows');
+CREATE TABLE IF NOT EXISTS `Prefers` (
+	`Username`	VARCHAR ( 15 ) NOT NULL,
+	`TheatreID`	INTEGER NOT NULL,
+	FOREIGN KEY(`Username`) REFERENCES `Customer`(`Username`),
+	FOREIGN KEY(`TheatreID`) REFERENCES `Theatre`(`TheatreID`)
+);
+INSERT INTO `Prefers` (Username,TheatreID) VALUES ('henry',5555),
+ ('minrui',2222),
+ ('minrui',3333),
+ ('mike',3333),
+ ('mike',4444),
+ ('chas',3333),
+ ('chas',4444),
+ ('nick',3333),
+ ('nick',6666),
+ ('cesaer',2222),
+ ('cesaer',3333),
+ ('henry',2222);
+CREATE TABLE IF NOT EXISTS `PlaysAt` (
+	`MovieTitle`	VARCHAR ( 50 ) NOT NULL,
+	`TheatreID`	INTEGER NOT NULL,
+	`ShowTime`	TIME,
+	`Playing`	VARCHAR ( 5 ) NOT NULL,
+	FOREIGN KEY(`TheatreID`) REFERENCES `Theatre`(`TheatreID`) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY(`MovieTitle`) REFERENCES `Movie`(`Title`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+INSERT INTO `PlaysAt` (MovieTitle,TheatreID,ShowTime,Playing) VALUES ('The World Before Your Feet',1111,'12:00:00','false'),
+ ('The World Before Your Feet',2222,'12:00:00','false'),
+ ('The World Before Your Feet',3333,'12:00:00','false'),
+ ('The World Before Your Feet',5555,'12:00:00','false'),
+ ('The World Before Your Feet',6666,'12:00:00','false'),
+ ('Ralph Breaks the Internet',1111,'14:00:00','false'),
+ ('Ralph Breaks the Internet',2222,'14:00:00','false'),
+ ('Ralph Breaks the Internet',3333,'14:00:00','false'),
+ ('Ralph Breaks the Internet',4444,'14:00:00','false'),
+ ('Ralph Breaks the Internet',5555,'14:00:00','false'),
+ ('Robin Hood',1111,'16:00:00','false'),
+ ('Robin Hood',3333,'16:00:00','false'),
+ ('Robin Hood',4444,'16:00:00','false'),
+ ('Robin Hood',5555,'16:00:00','false'),
+ ('Robin Hood',6666,'16:00:00','false'),
+ ('Creed II',1111,'16:00:00','false'),
+ ('Creed II',2222,'16:00:00','false'),
+ ('Creed II',3333,'16:00:00','false'),
+ ('Creed II',4444,'16:00:00','false'),
+ ('Creed II',5555,'16:00:00','false'),
+ ('A Star Is Born',1111,'18:00:00','true'),
+ ('A Star Is Born',2222,'18:00:00','true'),
+ ('A Star Is Born',4444,'18:00:00','true'),
+ ('A Star Is Born',5555,'18:00:00','true'),
+ ('A Star Is Born',6666,'18:00:00','true'),
+ ('At Eternitys Gate',2222,'12:00:00','true'),
+ ('At Eternitys Gate',3333,'12:00:00','true'),
+ ('At Eternitys Gate',4444,'12:00:00','true'),
+ ('At Eternitys Gate',5555,'12:00:00','true'),
+ ('At Eternitys Gate',6666,'12:00:00','true'),
+ ('Fantastic Beasts: The Crimes of Grindelwald',2222,'15:00:00','true'),
+ ('Fantastic Beasts: The Crimes of Grindelwald',3333,'15:00:00','true'),
+ ('Fantastic Beasts: The Crimes of Grindelwald',4444,'15:00:00','true'),
+ ('Fantastic Beasts: The Crimes of Grindelwald',5555,'15:00:00','true'),
+ ('Fantastic Beasts: The Crimes of Grindelwald',6666,'15:00:00','true'),
+ ('The Last Race',1111,'17:00:00','true'),
+ ('The Last Race',2222,'17:00:00','true'),
+ ('The Last Race',3333,'17:00:00','true'),
+ ('The Last Race',5555,'17:00:00','true'),
+ ('The Last Race',6666,'17:00:00','true'),
+ ('Widows',1111,'17:00:00','true'),
+ ('Widows',2222,'17:00:00','true'),
+ ('Widows',3333,'17:00:00','true'),
+ ('Widows',4444,'17:00:00','true'),
+ ('Widows',6666,'17:00:00','true'),
+ ('Halloween',1111,'11:00:00','true'),
+ ('Halloween',2222,'11:00:00','true'),
+ ('Halloween',3333,'11:00:00','true'),
+ ('Halloween',5555,'11:00:00','true'),
+ ('Halloween',6666,'11:00:00','true'),
+ ('Venom',1111,'19:00:00','true'),
+ ('Venom',2222,'19:00:00','true'),
+ ('Venom',3333,'19:00:00','true'),
+ ('Venom',4444,'19:00:00','true'),
+ ('Venom',6666,'19:00:00','true'),
+ ('The Nutcracker and the Four Realms',1111,'14:00:00','true'),
+ ('The Nutcracker and the Four Realms',3333,'14:00:00','true'),
+ ('The Nutcracker and the Four Realms',4444,'14:00:00','true'),
+ ('The Nutcracker and the Four Realms',5555,'14:00:00','true'),
+ ('The Nutcracker and the Four Realms',6666,'14:00:00','true'),
+ ('Mid90s',1111,'18:00:00','true'),
+ ('Mid90s',2222,'18:00:00','true'),
+ ('Mid90s',3333,'18:00:00','true'),
+ ('Mid90s',5555,'18:00:00','true'),
+ ('Mid90s',6666,'18:00:00','true'),
+ ('Bohemian Rhapsody',1111,'15:00:00','true'),
+ ('Bohemian Rhapsody',2222,'15:00:00','true'),
+ ('Bohemian Rhapsody',3333,'15:00:00','true'),
+ ('Bohemian Rhapsody',4444,'15:00:00','true'),
+ ('Bohemian Rhapsody',5555,'15:00:00','true'),
+ ('Instant Family',1111,'13:00:00','true'),
+ ('Instant Family',3333,'13:00:00','true'),
+ ('Instant Family',4444,'13:00:00','true'),
+ ('Instant Family',5555,'13:00:00','true'),
+ ('Instant Family',6666,'13:00:00','true');
+CREATE TABLE IF NOT EXISTS `PaymentInfo` (
+	`CardNo`	INT NOT NULL,
+	`NameOnCard`	VARCHAR ( 50 ) NOT NULL,
+	`CVV`	INT NOT NULL,
+	`ExpirationDate`	DATE NOT NULL,
+	`Saved`	VARCHAR ( 3 ) NOT NULL,
+	`Username`	VARCHAR ( 15 ) NOT NULL,
+	FOREIGN KEY(`Username`) REFERENCES `Customer`(`Username`) ON DELETE CASCADE ON UPDATE CASCADE,
+	PRIMARY KEY(`CardNo`)
+);
+INSERT INTO `PaymentInfo` (CardNo,NameOnCard,CVV,ExpirationDate,Saved,Username) VALUES (1111222233334444,'Henry',123,'2019-02-15','false','henry'),
+ (1125554788859964,'Jesse',263,'2019-04-12','true','jesse'),
+ (1145662588457742,'Minrui',147,'2019-04-25','true','minrui'),
+ (1234566987455556,'Mike',145,'2019-03-15','true','mike'),
+ (1236547885211458,'Mike',254,'2019-05-14','true','mike'),
+ (2214441255236625,'Jesse',226,'2019-03-22','true','jesse'),
+ (2224555866697774,'Chas',789,'2019-06-13','true','chas'),
+ (2236554111232254,'Minrui',885,'2019-03-15','true','minrui'),
+ (3326554188963325,'Chas',256,'2019-04-19','true','chas'),
+ (5555666677778888,'Henry',147,'2019-05-31','false','henry'),
+ (1101222233334444,'Henry',113,'2019-02-14','false','henry'),
+ (1101220233334444,'Henry',143,'2019-02-10','false','henry');
+CREATE TABLE IF NOT EXISTS `Order` (
+	`OrderID`	INTEGER NOT NULL UNIQUE,
+	`Date`	DATE NOT NULL,
+	`NoSeniorTickets`	INTEGER NOT NULL,
+	`NoAdultTickets`	INTEGER NOT NULL,
+	`NoChildTickets`	INTEGER NOT NULL,
+	`TotalTickets`	INTEGER NOT NULL,
+	`TotalCost`	FLOAT NOT NULL,
+	`Time`	TIME NOT NULL,
+	`Status`	VARCHAR ( 12 ) NOT NULL,
+	`Username`	VARCHAR ( 15 ) NOT NULL,
+	`MovieTitle`	VARCHAR ( 50 ) NOT NULL,
+	`CardNo`	INT NOT NULL,
+	`TheatreID`	INTEGER NOT NULL,
+	FOREIGN KEY(`CardNo`) REFERENCES `PaymentInfo`(`CardNo`),
+	FOREIGN KEY(`TheatreID`) REFERENCES `Theatre`(`TheatreID`),
+	FOREIGN KEY(`Username`) REFERENCES `Customer`(`Username`) ON UPDATE CASCADE,
+	FOREIGN KEY(`MovieTitle`) REFERENCES `Movie`(`Title`),
+	PRIMARY KEY(`OrderID`)
+);
+INSERT INTO `Order` (OrderID,Date,NoSeniorTickets,NoAdultTickets,NoChildTickets,TotalTickets,TotalCost,Time,Status,Username,MovieTitle,CardNo,TheatreID) VALUES (1,'2018-11-02',0,1,0,1,11.54,'15:00:00','complete','henry','Bohemian Rhapsody',1111222233334444,6666),
+ (2,'2018-12-14',0,1,0,1,6.54,'16:00:00','cancelled','henry','Creed II',5555666677778888,6666),
+ (3,'2018-11-22',1,1,0,2,20.77,'17:00:00','complete','henry','Widows',1111222233334444,5555),
+ (4,'2018-12-14',0,1,0,1,11.54,'12:00:00','unused','henry','The World Before Your Feet',5555666677778888,4444),
+ (5,'2018-11-16',0,1,0,1,11.54,'15:00:00','complete','henry','Fantastic Beasts: The Crimes of Grindelwald',5555666677778888,1111),
+ (6,'2018-12-14',1,1,0,2,20.77,'14:00:00','unused','henry','Ralph Breaks the Internet',1111222233334444,6666),
+ (7,'2018-11-16',1,1,1,3,23.85,'15:00:00','cancelled','henry','Fantastic Beasts: The Crimes of Grindelwald',1111222233334444,1111),
+ (8,'2018-12-14',0,1,0,1,11.54,'16:00:00','unused','henry','Robin Hood',5555666677778888,2222),
+ (9,'2018-12-14',0,1,0,1,11.54,'16:00:00','unused','minrui','Creed II',2236554111232254,6666),
+ (10,'2018-11-16',0,1,0,1,6.54,'17:00:00','cancelled','minrui','The Last Race',1145662588457742,4444),
+ (11,'2018-11-16',1,1,0,2,15.77,'17:00:00','cancelled','minrui','The Last Race',2236554111232254,4444),
+ (12,'2018-12-14',0,1,0,1,11.54,'14:00:00','unused','minrui','Ralph Breaks the Internet',1145662588457742,6666),
+ (13,'2018-12-14',1,1,0,2,20.77,'16:00:00','unused','minrui','Robin Hood',2236554111232254,2222),
+ (14,'2018-12-14',0,1,0,1,11.54,'12:00:00','unused','minrui','The World Before Your Feet',1145662588457742,4444),
+ (15,'2018-10-05',0,1,0,1,11.54,'19:00:00','complete','minrui','Venom',2236554111232254,5555),
+ (16,'2018-12-14',0,1,0,1,11.54,'16:00:00','unused','chas','Creed II',2224555866697774,6666),
+ (17,'2018-12-14',0,1,0,1,11.54,'14:00:00','unused','chas','Ralph Breaks the Internet',3326554188963325,6666),
+ (18,'2018-12-14',0,1,0,1,11.54,'12:00:00','unused','chas','The World Before Your Feet',3326554188963325,4444),
+ (19,'2018-10-05',0,1,0,1,11.54,'18:00:00','complete','chas','A Star Is Born',3326554188963325,3333),
+ (20,'2018-12-14',0,1,0,1,6.54,'16:00:00','cancelled','chas','Creed II',2224555866697774,6666),
+ (21,'2018-10-05',1,1,0,2,15.77,'18:00:00','cancelled','chas','A Star Is Born',3326554188963325,3333),
+ (22,'2018-10-05',0,1,0,1,6.54,'18:00:00','cancelled','chas','A Star Is Born',3326554188963325,3333),
+ (23,'2018-11-02',0,1,0,1,6.54,'15:00:00','cancelled','chas','Bohemian Rhapsody',2224555866697774,6666),
+ (24,'2018-10-19',0,2,0,2,23.08,'11:00:00','complete','chas','Halloween',2224555866697774,4444),
+ (25,'2018-12-14',0,1,0,1,11.54,'16:00:00','unused','chas','Robin Hood',3326554188963325,2222),
+ (26,'2018-11-16',0,1,0,1,11.54,'14:00:00','complete','chas','The Nutcracker and the Four Realms',2224555866697774,2222),
+ (27,'2018-12-14',0,1,0,1,11.54,'16:00:00','unused','mike','Creed II',1234566987455556,6666),
+ (28,'2018-11-02',0,1,0,1,11.54,'15:00:00','complete','mike','Bohemian Rhapsody',1234566987455556,6666),
+ (29,'2018-10-26',1,1,0,2,20.77,'18:00:00','complete','mike','Mid90s',1234566987455556,4444),
+ (30,'2018-12-14',0,1,0,1,11.54,'16:00:00','unused','mike','Robin Hood',1234566987455556,2222),
+ (31,'2018-11-01',0,1,0,1,6.54,'18:00:00','cancelled','mike','A Star Is Born',1234566987455556,3333),
+ (32,'2018-10-05',1,1,0,2,20.77,'18:00:00','complete','mike','A Star Is Born',1234566987455556,3333),
+ (33,'2018-12-14',0,1,0,1,11.54,'14:00:00','unused','mike','Ralph Breaks the Internet',1234566987455556,6666),
+ (34,'2018-11-22',0,1,0,1,11.54,'17:00:00','complete','mike','The Last Race',1234566987455556,4444),
+ (35,'2018-12-14',0,1,1,2,19.62,'12:00:00','unused','mike','The World Before Your Feet',1234566987455556,4444),
+ (36,'2018-10-19',0,1,0,1,6.54,'11:00:00','cancelled','mike','Halloween',1234566987455556,4444),
+ (37,'2018-11-05',1,1,0,2,15.77,'14:00:00','cancelled','jesse','The Nutcracker and the Four Realms',1125554788859964,2222),
+ (38,'2018-12-14',0,1,2,3,27.7,'14:00:00','unused','jesse','Ralph Breaks the Internet',2214441255236625,6666),
+ (39,'2018-12-14',0,1,0,1,11.54,'12:00:00','unused','jesse','The World Before Your Feet',1125554788859964,4444),
+ (40,'2018-12-14',1,2,0,3,32.31,'16:00:00','unused','jesse','Creed II',2214441255236625,6666),
+ (41,'2018-10-26',1,2,0,3,32.31,'18:00:00','unused','jesse','Mid90s',2214441255236625,2222),
+ (42,'2018-12-14',1,2,0,3,32.31,'16:00:00','complete','jesse','Robin Hood',2214441255236625,2222),
+ (43,'2018-11-16',1,2,0,3,32.31,'13:00:00','complete','jesse','Instant Family',2214441255236625,2222),
+ (44,'2018-11-16',1,2,0,3,32.31,'12:00:00','complete','jesse','At Eternitys Gate',2214441255236625,2222),
+ (45,'2018-11-15',0,1,0,1,11.54,'13:08:04','unused','henry','Creed II',5555666677778888,6666);
+CREATE TABLE IF NOT EXISTS `Movie` (
+	`Title`	VARCHAR ( 50 ) NOT NULL,
+	`Rating`	VARCHAR ( 10 ),
+	`Genre`	VARCHAR ( 30 ),
+	`Length`	TIME,
+	`AverageRating`	FLOAT,
+	`Synopsis`	VARCHAR ( 1000 ),
+	`Cast`	VARCHAR ( 500 ),
+	`ReleaseDate`	DATE,
+	PRIMARY KEY(`Title`)
+);
+INSERT INTO `Movie` (Title,Rating,Genre,Length,AverageRating,Synopsis,Cast,ReleaseDate) VALUES ('A Star Is Born','R','Drama / Music / Romance','02:16:00',0.0,'A musician helps a young singer find fame, even as age and alcoholism send his own career into a downward spiral.','Lady Gaga, Ally, Bradley Cooper, Jack, Sam Elliot, Bobby, Andrew Dice Clay, Lorenzo, Rafi Gavron, Rez Gavron','2018-10-05'),
+ ('At Eternitys Gate','PG-13','Biography / Drama','01:50:00',0.0,'A look at the life of painter Vincent van Gogh during the time he lived in Arles and Auvers-sur-Oise, France.','Willem Dafoe, Vincent Van Gogh, Rupert Friend, Theo Van Gogh, Oscar Isaac, Paul Gauguin, Mads Mikkelsen, The Priest, Mathieu Amalric, Dr. Paul Gachet','2018-11-16'),
+ ('Bohemian Rhapsody','PG-13','Biography / Drama / Music','02:14:00',4.5,'A chronicle of the years leading up to Queens legendary appearance at the Live Aid (1985) concert.','Rami Malek, Freddie Mercury, Lucy Boynton, Mary Austin, Gwilym Lee, Brian May, Ben Hardy, Roger Taylor, Joseph Mazzello, John Deacon (as Joe Mazzello)','2018-11-02'),
+ ('Creed II','PG-13','Drama / Sport','02:00:00',0.0,'Under the tutelage of Rocky Balboa, newly crowned light heavyweight champion Adonis Creed faces off against Viktor Drago, the son of Ivan Drago.','Tessa Thompson, Bianca, Sylvester Stallone, 	Rocky Balboa, Michael B. Jordan, Adonis Johnson, Dolph Lundgren, Ivan Drago, Florian Munteanu, Viktor Drago','2018-12-14'),
+ ('Fantastic Beasts: The Crimes of Grindelwald','PG-13','Adventure / Family / Fantasy','02:14:00',0.0,'The second installment of the \"Fantastic Beasts\" series set in J.K. Rowlings Wizarding World featuring the adventures of magizoologist Newt Scamander.','Eddie Redmayne, Newt Scamander, Katherine Waterston,	Tina Goldstein, Dan Fogler, Jacob Kowalski, Alison Sudol, Queenie Goldstein, Ezra Miller, Credence Barebone','2018-11-16'),
+ ('Halloween','R','Horror / Thriller','01:46:00',0.0,'Laurie Strode confronts her long-time foe Michael Myers, the masked figure who has haunted her since she narrowly escaped his killing spree on Halloween night four decades ago.','Jamie Lee Curtis, Laurie Strode, Judy Greer, Karen, Andi Matichak, Allyson, James Jude Courtney, The Shape, Nick Castle, The Shape','2018-10-19'),
+ ('Instant Family','PG-13','Comedy','02:00:00',0.0,'A couple find themselves in over their heads when they adopt three children.','Mark Wahlberg, Pete, Rose Byrne, Ellie, Isabela Moner, Lizzy, Gustavo Quiroz, Juan, Julianna Gamiz, Lita','2018-11-16'),
+ ('Mid90s','R','Comedy / Drama','01:25:00',0.0,'Follows Stevie, a thirteen-year-old in 1990s-era Los Angeles who spends his summer navigating between his troubled home life and a group of new friends that he meets at a Motor Avenue skate shop.','Sunny Suljic, Stevie, Katherine Waterston, Dabney, Lucas Hedges, Ian, Na-kel Smith, Ray, Olan Prenatt, Fuckshit','2018-10-26'),
+ ('Ralph Breaks the Internet','PG','Animation / Adventure / Comedy','01:52:00',0.0,'Six years after the events of \"Wreck-It Ralph\", Ralph and Vanellope, now friends, discover a wi-fi router in their arcade, leading them into a new adventure.','John C. Reilly, Ralph (voice), Sarah Silverman, Vanellope (voice), Gal Gadot, Shank (voice), Taraji P. Henson, Yesss (voice), Jack McBrayer, Felix (voice)','2018-12-14'),
+ ('Robin Hood','PG-13','Action / Adventure','01:56:00',0.0,'A war-hardened Crusader and his Moorish commander mount an audacious revolt against the corrupt English crown in a thrilling action-adventure packed with gritty battlefield exploits, mind-blowing fight choreography, and a timeless romance.','Taron Egerton, Robin of Loxley, Jamie Foxx, Yahya / John, Ben Mendelsohn, Sheriff of Nottingham, Eve Hewson, 	Marian, Jamie Dornan, Will Scarlet','2018-12-14'),
+ ('The Last Race','PG-13',' Documentary / Sport ','01:15:00',0.0,'THE LAST RACE is the portrait of a small-town stock car racetrack and the tribe of blue-collar drivers that call it home, struggling to hold onto an American racing tradition as the world around them is transformed by globalization and commercialization.','Marty Berger, Real estate developer, Mike Cappiello, Track official, Barbara Cromarty, Race track co-owner, Jim Cromarty, Race track co-owner, Bob Finan, Announcer','2018-11-16'),
+ ('The Nutcracker and the Four Realms','PG','Adventure / Family / Fantasy','01:39:00',0.0,'A young girl is transported into a magical world of gingerbread soldiers and an army of mice.','Mackenzie Foy, Clara, Tom Sweet, Fritz, Meera Syal, Cook, Ellie Bamber, Louise, Matthew Macfadyen, Mr. Stahlbaum','2018-11-02'),
+ ('The World Before Your Feet','PG-13','Documentary','01:35:00',0.0,'For over six years, and for reasons he cant explain, Matt Green, 37, has been walking every block of every street in New York City - a journey of more than 8,000 miles. THE WORLD BEFORE YOUR FEET tells the story of one mans unusual personal quest and the unexpected journey of discovery, humanity, and wonder that ensues.','Matt Green, Himself','2018-12-14'),
+ ('Venom','PG-13','Action / Sci-Fi','01:52:00',0.0,'When Eddie Brock acquires the powers of a symbiote, he will have to release his alter-ego \"Venom\" to save his life.','Tomy Hardy, Eddie Brock / Venom, Michelle Williams, Anne Weying, Riz Ahmed, Carlton Drake / Riot, Scott Haze, Security Chief Roland Treece, Reid Scott, Dr. Dan Lewis','2018-10-05'),
+ ('Widows','R','Crime / Drama / Romance','02:09:00',4.0,'Set in contemporary Chicago, amidst a time of turmoil, four women with nothing in common except a debt left behind by their dead husbands criminal activities, take fate into their own hands, and conspire to forge a future on their own terms.','Viola Davis, Veronica, Liam Neeson, Harry Rawlings, Jon Bernthal, Florek, Manuel Garcia-Rulfo, Carlos, Coburn Goss, Jimmy Nunn','2018-11-16');
+CREATE TABLE IF NOT EXISTS `Manager` (
+	`Email`	VARCHAR ( 50 ) NOT NULL UNIQUE,
+	`Username`	VARCHAR ( 15 ) NOT NULL UNIQUE,
+	`Password`	VARCHAR ( 30 ),
+	PRIMARY KEY(`Email`,`Username`)
+);
+INSERT INTO `Manager` (Email,Username,Password) VALUES ('cto@gmail.com','cto','cto'),
+ ('dori@gmail.com','dori','dori'),
+ ('jack@gmail.com','jack','jack'),
+ ('jim@gmail.com','jim','jim'),
+ ('kelly@gmail.com','kelly','kelly'),
+ ('president@gmail.com','president','president'),
+ ('$lmim@blerg.com','Logan2','Logan2');
+CREATE TABLE IF NOT EXISTS `Customer` (
+	`Email`	VARCHAR ( 50 ) NOT NULL UNIQUE,
+	`Username`	VARCHAR ( 15 ) NOT NULL UNIQUE,
+	`Password`	VARCHAR ( 30 ),
+	PRIMARY KEY(`Email`,`Username`)
+);
+INSERT INTO `Customer` (Email,Username,Password) VALUES ('anthony@gmail.com','anthony','anthony'),
+ ('bailey@gmail.com','bailey','bailey'),
+ ('cesaer@gmail.com','cesaer','cesaer'),
+ ('chas@gmail.com','chas','chas'),
+ ('claire@gmail.com','claire','claire'),
+ ('colin@gmail.com','colin','colin'),
+ ('francis@gmail.com','francis','francis'),
+ ('frankie@gmail.com','frankie','frankie'),
+ ('gracie@gmail.com','gracie','gracie'),
+ ('henry@gmail.com','henry','henry'),
+ ('javy@gmail.com','javy','javy'),
+ ('jesse@gmail.com','jesse','jesse'),
+ ('kris@gmail.com','kris','kris'),
+ ('mike@gmail.com','mike','mike'),
+ ('minrui@gmail.com','minrui','minrui'),
+ ('mozzie@gmail.com','mozzie','mozzie'),
+ ('neil@gmail.com','neil','neil'),
+ ('nick@gmail.com','nick','nick'),
+ ('pepper@gmail.com','pepper','pepper'),
+ ('peter@gmail.com','peter','peter'),
+ ('petey@gmail.com','petey','petey'),
+ ('shane@gmail.com','shane','shane'),
+ ('$lmim@blerg.com','Logan','Logan');
+CREATE VIEW `comfirmation` as
+	Select `Order`.`OrderID`, `Order`.`MovieTitle`, `PlaysAt`.`ShowTime`, `Order`.`Date`, `Theatre`.`Street`, `Theatre`.`City`,
+	`Theatre`.`State`, `Theatre`.`ZIP`, `Movie`.`Rating`, `Movie`.`Length`
+	From `Order`
+	Join `PlaysAT` ON `PlaysAt`.`TheatreID` = `Order`.`TheatreID`
+	Join `Theatre` ON `Theatre`.`TheatreID` = `Order`.`TheatreID`
+	Join `Movie` ON `Movie`.`Title` = `Order`.`MovieTitle`
+	where `OrderID` = '0045'
+	group by OrderID;
+COMMIT;
+
+-- QUERIES --
+-----------------------------------------------------------------------1
+-- Login qurey that checks to see if user has an account
+-- manager
+SELECT * FROM `Customer` WHERE `Username` = 'cto' AND `Password` = 'cto'
+union
+SELECT * FROM `Manager` WHERE `Username` = 'cto' AND `Password` = 'cto';
+-- customer
+SELECT * FROM `Customer` WHERE `Username` = 'henry' AND `Password` = 'henry'
+union
+SELECT * FROM `Manager` WHERE `Username` = 'henry' AND `Password` = 'henry';
+
+-----------------------------------------------------------------------2
+-- Register into the Customer
+INSERT INTO `Customer` (`Email`, `Username`, `Password`) VALUES ('lmim@blerg.com', 'Logan', 'Logan');
+
+-- Register into Manager
+INSERT INTO `Manager` (`Email`, `Username`, `Password`) VALUES ('lmim@blerg.com', 'Logan2', 'Logan2');
+
+-----------------------------------------------------------------------customer1
+-- Get the now playing movies
+SELECT `MovieTitle` FROM `playsat` WHERE `Playing` = 'true';
+
+-----------------------------------------------------------------------customer3
+-- Displays the movie info on moviePage
+SELECT `Rating`, `Genre`, `Length`, `AverageRating`, `ReleaseDate` FROM `movie` WHERE `Title` = 'A Star Is Born';
+
+-----------------------------------------------------------------------customer4
+-- `Movie Overview This gets the movies Snopsis and cast for a movie
+SELECT `Synopsis`, `Cast` FROM movie WHERE `Title` = 'A Star Is Born';
+
+------------------------------------------------------------------------customer5
+-- Movie Review Overview
+-- Get Movie average rating
+SELECT `AverageRating` FROM `Movie` WHERE `Title` = 'The World Before Your Feet';
+
+-- Selects reviews for a movie
+SELECT `Title`, `Comments`, `Rating` FROM `review` WHERE `MovieTitle` = 'The World Before Your Feet';
+
+--------------------------------------------------------------------------customer6
+-- Give Review
+-- Make sure the user has a valid ticket completion for Movie
+SELECT `Username` FROM `Customer` WHERE `Username` IN (SELECT `Username` FROM `order` WHERE `MovieTitle` = 'Widows' AND `status` = 'complete') AND `Username` = 'henry';
+
+-- insert the review into the database
+INSERT INTO `review` (`Title`, `Comments`, `Rating`, `Username`,`MovieTitle`) VALUES ('MEH', 'MeEHHHHH', 4,'henry', 'Widows');
+
+-- update the average rating
+UPDATE `movie` SET `AverageRating` = (SELECT    AVG(`Rating`) FROM `review` WHERE `MovieTitle` = 'Widows') WHERE `movie`.`Title` = 'Widows';
+
+-----------------------------------------------------------------------------customer7
+-- BuyTicket
+-- choose theatre prefer Theatre
+SELECT *
+FROM `Movie`
+Join(
+	SELECT *
+	FROM `prefers`
+	JOIN `theatre`
+	ON `prefers`.`TheatreID`=`theatre`.`TheatreID`
+	WHERE `prefers`.`Username` = 'henry')
+WHERE `Title`='Bohemian Rhapsody' AND `TheatreID`='1111';
+
+-- add prefer theatres
+INSERT INTO `prefers` (`Username`, `TheatreID`) VALUES
+('henry', '2222');
+
+-- select time
+SELECT ShowTime
+FROM `PlaysAt`
+Where `MovieTitle`='Bohemian Rhapsody';
+
+-- buy ticket payment saved card option
+SELECT *
+FROM `PaymentInfo`
+WHERE `NameOnCard` = 'Henry' AND `CardNo` = '1111222233334444';
+
+-- saved new card PaymentInfo
+INSERT INTO `paymentinfo` (`CardNo`, `NameOnCard`, `CVV`, `ExpirationDate`, `Saved`, `Username`) VALUES
+(1101222233334444, 'Henry', 113, '2019-02-14', 'true', 'henry');
+-- not saved card PaymentInfo
+INSERT INTO `paymentinfo` (`CardNo`, `NameOnCard`, `CVV`, `ExpirationDate`, `Saved`, `Username`) VALUES
+(1101220233334444, 'Henry', 143, '2019-02-10', 'false', 'henry');
+
+-- insert into order
+INSERT INTO `order` (`OrderID`, `Date`, `NoSeniorTickets`, `NoAdultTickets`, `NoChildTickets`, `Time`, `TotalTickets`, `TotalCost`, `Status`, `Username`, `MovieTitle`, `CardNo`, `TheatreID`) VALUES
+(0045, '2018-11-15', 0, 1, 0, '13:08:04', 1, 11.54, 'unused', 'henry', 'Creed II', 5555666677778888, 6666);
+
+-- creat view for comfirmation
+create view `comfirmation` as
+	Select `Order`.`OrderID`, `Order`.`MovieTitle`, `PlaysAt`.`ShowTime`, `Order`.`Date`, `Theatre`.`Street`, `Theatre`.`City`,
+	`Theatre`.`State`, `Theatre`.`ZIP`, `Movie`.`Rating`, `Movie`.`Length`
+	From `Order`
+	Join `PlaysAT` ON `PlaysAt`.`TheatreID` = `Order`.`TheatreID`
+	Join `Theatre` ON `Theatre`.`TheatreID` = `Order`.`TheatreID`
+	Join `Movie` ON `Movie`.`Title` = `Order`.`MovieTitle`
+	where `OrderID` = '0045'
+	group by OrderID;
+
+-----------------------------------------------------------------------customer8
+-- gets the order information from a given order ID
+SELECT * FROM `order` JOIN `movie` JOIN `theatre` WHERE `OrderID`= 8 AND `order`.`MovieTitle` = `movie`.`Title` AND `order`.`TheatreID` = `theatre`.`TheatreID`;
+
+-----------------------------------------------------------------------customer9
+-- Update a order to cancelled
+UPDATE `order` SET `Status` = 'cancelled' WHERE `OrderID` = 2;
+UPDATE `order` SET `TotalCost` = `TotalCost` - 5 WHERE `OrderID` = 2;
+
+-----------------------------------------------------------------------customer10
+-- MyPaymentInfo Query for a user. User is Henry in this case.
+Select CardNo, NameOnCard, ExpirationDate
+From PaymentInfo Join Customer
+where PaymentInfo.Username = Customer.Username AND Customer.Username = 'henry';
+
+-- Remove Saved Payment Info for User. User is Henry in this case.
+Update PaymentInfo SET 'Saved' = 'false' WHERE Username = 'henry';
+
+-----------------------------------------------------------------------customer11
+-- Displays a users prefered theatre list
+SELECT * FROM `prefers` JOIN `theatre` ON `prefers`.`TheatreID`=`theatre`.`TheatreID` WHERE `prefers`.`Username` = 'henry';
+
+-- Deletes a prefered theatre form a users perfered list
+DELETE FROM `prefers` WHERE `Username` = 'henry' AND `TheatreID` = '1111';
+
+-----------------------------------------------------------------------manager1
+-- generates revenue report
+select case strftime('%m', date(Date))
+    when '01' then 'January' when '02' then 'Febuary'
+    when '03' then 'March' when '04' then 'April'
+    when '05' then 'May' when '06' then 'June'
+    when '07' then 'July' when '08' then 'August'
+    when '09' then 'September' when '10' then 'October'
+    when '11' then 'November' when '12' then 'December' else ''
+end as Month, '$' || sum(`TotalCost`) as Revenue from `Order`
+where `date` >= date('now', '-90 days')
+Group by strftime('%y"', `date`), strftime('%m', `date`)
+order by `Month` desc
+limit 3;
+
+-- generates popular report
+Select *
+from (
+SELECT case strftime('%m', date(Date))
+  when '01' then 'January' when '02' then 'Febuary'
+  when '03' then 'March' when '04' then 'April'
+  when '05' then 'May' when '06' then 'June'
+  when '07' then 'July' when '08' then 'August'
+  when '09' then 'September' when '10' then 'October'
+  when '11' then 'November' when '12' then 'December' else ''
+end as Month, MovieTitle, COUNT(TotalTickets) AS NUM
+FROM 'Order'
+Where Month = 'December'
+GROUP BY date, MovieTitle
+ORDER BY NUM DESC
+Limit 3
+)
+UNION
+select *
+from(
+SELECT case strftime('%m', date(Date))
+  when '01' then 'January' when '02' then 'Febuary'
+  when '03' then 'March' when '04' then 'April'
+  when '05' then 'May' when '06' then 'June'
+  when '07' then 'July' when '08' then 'August'
+  when '09' then 'September' when '10' then 'October'
+  when '11' then 'November' when '12' then 'December' else ''
+end as Month, MovieTitle, COUNT(TotalTickets) AS NUM
+FROM 'Order'
+Where Month = 'November'
+GROUP BY date, MovieTitle
+ORDER BY NUM DESC
+Limit 3
+)
+union
+select *
+from(
+SELECT case strftime('%m', date(Date))
+  when '01' then 'January' when '02' then 'Febuary'
+  when '03' then 'March' when '04' then 'April'
+  when '05' then 'May' when '06' then 'June'
+  when '07' then 'July' when '08' then 'August'
+  when '09' then 'September' when '10' then 'October'
+  when '11' then 'November' when '12' then 'December' else ''
+end as Month, MovieTitle, COUNT(TotalTickets) AS NUM
+FROM 'Order'
+Where Month = 'October'
+GROUP BY date, MovieTitle
+ORDER BY NUM DESC
+Limit 3
+)
